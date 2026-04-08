@@ -719,7 +719,7 @@ if not st.session_state.authenticated:
                 st.markdown("""
 **Causes fréquentes :**
 - **invalid_grant** : le code expire en 60s — recliquez sur le bouton Google.
-- **redirect_uri_mismatch** : dans Google Console, l'URI doit être `http://localhost:8502/oauth2callback`
+- **redirect_uri_mismatch** : dans Google Console, l'URI doit être `https://hemerson-trustlink.streamlit.app/oauth2callback`
 - **State mismatch** : redémarrez Streamlit et réessayez.
 - **Voir le terminal** : les lignes `[OAuth DEBUG]` indiquent l'étape exacte du blocage.
                 """)
