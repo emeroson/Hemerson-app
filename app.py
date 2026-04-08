@@ -104,7 +104,7 @@ except ImportError:
 #     GOOGLE_CLIENT_ID="YOUR_CLIENT_ID"
 #     GOOGLE_CLIENT_SECRET="YOUR_CLIENT-SECRET"
 #     ADMIN_PASSWORD=VotreMotDePasseAdmin
-#     REDIRECT_URI=http://localhost:8502/oauth2callback
+#     REDIRECT_URI=https://hemerson-trustlink.streamlit.app/oauth2callback
 #
 #   Ajoutez dans .gitignore :  .env  trustlink_saas.json
 # ─────────────────────────────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ def _require_env(key: str, fallback: str = "") -> str:
 
 _CLIENT_ID     = _require_env("GOOGLE_CLIENT_ID",     "xxxx")
 _CLIENT_SECRET = _require_env("GOOGLE_CLIENT_SECRET", "xxxx")
-_REDIRECT_URI  = _require_env("REDIRECT_URI",         "http://localhost:8502/oauth2callback")
+_REDIRECT_URI  = _require_env("REDIRECT_URI",         "https://hemerson-trustlink.streamlit.app/oauth2callback")
 _ADMIN_PLAIN   = _require_env("ADMIN_PASSWORD",       "xxxx")
 
 _SCOPES        = [
