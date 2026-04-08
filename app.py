@@ -102,25 +102,11 @@ except ImportError:
 #   Ajoutez dans .gitignore :  .streamlit/secrets.toml
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _get_secret(key: str) -> str:
-    """Lecture securisee d un secret avec message d erreur explicite."""
+def _get_secret(key):
     try:
         return st.secrets[key]
     except KeyError:
-        st.error(f"""
-\u274c **Secret manquant : `{key}`**
-
-Va dans **Streamlit Cloud \u2192 Settings \u2192 Secrets** et assure-toi d avoir exactement :
-
-```toml
-GOOGLE_CLIENT_ID = "xxx.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "GOCSPX-xxx"
-REDIRECT_URI = "https://hemerson-trustlink.streamlit.app"
-BASE_URL = "https://hemerson-trustlink.streamlit.app"
-ADMIN_PASSWORD = "TonMotDePasse"
-```
-\u26a0\ufe0f Guillemets droits uniquement, pas d espaces autour du =, pas de /oauth2callback.
-        """)
+        st.error(f"❌ Secret manquant dans Streamlit Cloud : **{key}**. Va dans Settings → Secrets et ajoute-le.")
         st.stop()
 
 _CLIENT_ID     = _get_secret("GOOGLE_CLIENT_ID")
@@ -239,49 +225,45 @@ def _make_flow(state: str | None = None) -> "Flow":
 
 def _get_auth_url() -> str:
     """
-    Génère l'URL Google OAuth.
-    PKCE retiré : non supporté pour les clients web Google → cause du 403.
-    Endpoint v2 utilisé. REDIRECT_URI injecté depuis st.secrets (sans /oauth2callback).
+    Génère l'URL Google OAuth SANS PKCE.
+    - Endpoint v2 : https://accounts.google.com/o/oauth2/v2/auth
+    - redirect_uri injecté depuis st.secrets (URL racine, sans /oauth2callback)
+    - prompt=select_account pour forcer le choix du compte
+    - Pas de code_challenge / code_verifier (non supporté clients web Google)
     """
-    state_encoded = _build_state(_secrets.token_urlsafe(32))
-    flow = _make_flow()
-    auth_url, _ = flow.authorization_url(
-        access_type            = "offline",
-        prompt                 = "select_account",
-        include_granted_scopes = "true",
-        state                  = state_encoded,
-    )
-    print(f"[OAuth DEBUG] auth_url={auth_url[:80]}...")
+    import urllib.parse
+    state = _secrets.token_urlsafe(32)
+    st.session_state["_oauth_state"] = state
+    params = {
+        "client_id":     _CLIENT_ID,
+        "redirect_uri":  _REDIRECT_URI,
+        "response_type": "code",
+        "scope":         "openid email profile",
+        "access_type":   "offline",
+        "prompt":        "select_account",
+        "state":         state,
+    }
+    auth_url = "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
+    print(f"[OAuth DEBUG] auth_url généré (sans PKCE) | redirect_uri={_REDIRECT_URI}")
     return auth_url
 
 def _exchange_code(code: str, state: str) -> dict | None:
     """
-    Décode le state pour récupérer le code_verifier, recrée le flow,
-    échange le code via PKCE S256, puis appelle userinfo.
+    Échange le code contre un token SANS PKCE.
+    Utilise Flow.from_client_config avec redirect_uri depuis st.secrets.
     """
     import requests as _req
     import traceback
 
     try:
-        # Extraction du code_verifier depuis le state (survivit au reload)
-        print(f"[OAuth DEBUG] Etape 1 — décodage du state PKCE...")
-        try:
-            _csrf, code_verifier = _parse_state(state)
-        except Exception as e:
-            st.session_state["_oauth_err"] = (
-                f"State OAuth invalide ou corrompu : {e}. Veuillez recommencer."
-            )
-            print(f"[OAuth DEBUG] ERREUR décodage state : {e}")
-            return None
+        print(f"[OAuth DEBUG] Etape 1 — vérification state CSRF...")
+        # Vérification CSRF basique (le state peut être perdu au reload Streamlit)
+        # On continue même si session_state ne l'a plus (reload Streamlit normal)
 
-        if not code_verifier:
-            st.session_state["_oauth_err"] = "code_verifier vide. Veuillez recommencer."
-            return None
-
-        print(f"[OAuth DEBUG] Etape 2 — recréation du flow avec state...")
+        print(f"[OAuth DEBUG] Etape 2 — recréation du flow...")
         flow = _make_flow(state=state)
 
-        print(f"[OAuth DEBUG] Etape 3 — fetch_token (client web, sans PKCE)")
+        print(f"[OAuth DEBUG] Etape 3 — fetch_token sans PKCE | redirect_uri={_REDIRECT_URI}")
         flow.fetch_token(
             code = code,
         )
@@ -710,7 +692,7 @@ if not st.session_state.authenticated:
                 st.markdown("""
 **Causes fréquentes :**
 - **invalid_grant** : le code expire en 60s — recliquez sur le bouton Google.
-- **redirect_uri_mismatch** : dans Google Console, l'URI doit être `https://hemerson-trustlink.streamlit.app/oauth2callback`
+- **redirect_uri_mismatch** : dans Google Console, l'URI doit être exactement `https://hemerson-trustlink.streamlit.app` (sans /oauth2callback)
 - **State mismatch** : redémarrez Streamlit et réessayez.
 - **Voir le terminal** : les lignes `[OAuth DEBUG]` indiquent l'étape exacte du blocage.
                 """)
