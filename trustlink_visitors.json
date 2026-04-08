@@ -1,0 +1,38 @@
+[
+  {
+    "email": "emersonanoh22@gmail.com",
+    "nom": "Emerson Anoh",
+    "role": "google",
+    "login_type": "google",
+    "premiere_connexion": "06/04/2026 07:12:54",
+    "derniere_connexion": "08/04/2026 09:48:49",
+    "nb_connexions": 34
+  },
+  {
+    "email": "hemerson@trustlink.ci",
+    "nom": "Hemerson",
+    "role": "admin",
+    "login_type": "admin",
+    "premiere_connexion": "06/04/2026 07:14:55",
+    "derniere_connexion": "07/04/2026 08:58:35",
+    "nb_connexions": 19
+  },
+  {
+    "email": "sonioff09@gmail.com",
+    "nom": "Soni Off",
+    "role": "google",
+    "login_type": "google",
+    "premiere_connexion": "07/04/2026 06:22:37",
+    "derniere_connexion": "07/04/2026 07:56:18",
+    "nb_connexions": 2
+  },
+  {
+    "email": "marieehui13@gmail.com",
+    "nom": "Ehui Marie",
+    "role": "google",
+    "login_type": "google",
+    "premiere_connexion": "07/04/2026 06:51:30",
+    "derniere_connexion": "08/04/2026 06:23:53",
+    "nb_connexions": 9
+  }
+]

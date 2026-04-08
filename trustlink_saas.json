@@ -1,0 +1,17 @@
+{
+  "sonioff09@gmail.com": {
+    "user_id": "7957843d-1490-45c0-8f69-071647e08a59",
+    "email": "sonioff09@gmail.com",
+    "tries": 2,
+    "paid": 1,
+    "invoice_token": ""
+  },
+  "emersonanoh22@gmail.com": {
+    "user_id": "60ba1ca2-9395-43d8-9a12-49b473365c60",
+    "email": "emersonanoh22@gmail.com",
+    "tries": 2,
+    "paid": 0,
+    "invoice_token": "test_wy3mBvZ1TF",
+    "created_at": "2026-04-05 10:16:13.708985"
+  }
+}

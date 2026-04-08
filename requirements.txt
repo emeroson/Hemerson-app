@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+plotly
+requests
+python-dotenv
+joblib
+scikit-learn
+google-auth
+google-auth-oauthlib
