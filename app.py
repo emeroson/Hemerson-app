@@ -552,8 +552,7 @@ if not st.session_state.authenticated:
                     filter:brightness(1.05) contrast(1.05);
                     background:transparent;" />
         <div>
-            <div style="font-size:14px;font-weight:800;color:#ffffff;
-                font-family:'Poppins',sans-serif;letter-spacing:1.5px;">INSSEDS</div>
+            <div style="font-size:14px;font-weight:800;color:#ffffff;font-family:'Poppins',sans-serif;letter-spacing:1.5px;white-space:nowrap;overflow:visible;">INSSEDS</div>
             <div style="font-size:11px;color:#a0bfff;font-weight:600;
                 font-family:'Poppins',sans-serif;">Statistique · Économétrie · Data Science</div>
         </div>
